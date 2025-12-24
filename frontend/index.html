@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Currency Converter Pro</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-y: auto; 
+        }
+
+        .animated-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: rise 15s infinite ease-in;
+        }
+
+        .bubble:nth-child(1) { width: 80px; height: 80px; left: 10%; animation-delay: 0s; }
+        .bubble:nth-child(2) { width: 120px; height: 120px; left: 20%; animation-delay: 2s; }
+        .bubble:nth-child(3) { width: 60px; height: 60px; left: 40%; animation-delay: 4s; }
+        .bubble:nth-child(4) { width: 100px; height: 100px; left: 60%; animation-delay: 1s; }
+        .bubble:nth-child(5) { width: 90px; height: 90px; left: 80%; animation-delay: 3s; }
+
+        @keyframes rise {
+            0% { bottom: -100px; opacity: 0; transform: translateX(0) rotate(0deg); }
+            50% { opacity: 1; }
+            100% { bottom: 110%; opacity: 0; transform: translateX(100px) rotate(360deg); }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 35px;
+            padding: 30px 25px;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.2);
+            max-width: 700px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-height: 90vh;  /* YEH LINE ADD KARO */
+            overflow-y: auto;  /* YEH LINE ADD KARO */
+        }
+
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .icon-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .main-icon {
+            font-size: 4rem;
+            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 10px 20px rgba(102, 126, 234, 0.3));
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-10px) rotate(-5deg); }
+            75% { transform: translateY(-5px) rotate(5deg); }
+        }
+
+        .sparkle {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: sparkle 2s infinite;
+        }
+
+        .sparkle:nth-child(1) { top: 0; right: 20%; animation-delay: 0s; }
+        .sparkle:nth-child(2) { bottom: 0; left: 20%; animation-delay: 0.5s; }
+        .sparkle:nth-child(3) { top: 50%; right: 10%; animation-delay: 1s; }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+            50% { opacity: 1; transform: scale(1) rotate(180deg); }
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1rem;
+            font-weight: 300;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(240, 147, 251, 0.1));
+            border-radius: 20px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .label-icon {
+            font-size: 1.2rem;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 18px 24px;
+            border: 2px solid #e0e0e0;
+            border-radius: 18px;
+            font-size: 1.05rem;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            background: white;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 6px rgba(102, 126, 234, 0.1);
+            transform: translateY(-3px);
+        }
+
+        input:hover, select:hover {
+            border-color: #764ba2;
+        }
+
+        .currency-row {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 20px;
+            align-items: end;
+            margin-bottom: 25px;
+        }
+
+        .swap-button {
+            display: flex;
+            align-items: flex-end;
+            padding-bottom: 10px;
+        }
+
+        .swap-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            color: white;
+            border: none;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .swap-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .swap-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .swap-btn:hover {
+            transform: rotate(180deg) scale(1.15);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.6);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .feature-item {
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(240, 147, 251, 0.05));
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .feature-text {
+            font-size: 0.8rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .convert-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            color: white;
+            border: none;
+            border-radius: 18px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .convert-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .convert-btn:hover::before {
+            left: 100%;
+        }
+
+        .convert-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+        }
+
+        .convert-btn:active {
+            transform: translateY(-2px);
+        }
+
+        .convert-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(240, 147, 251, 0.08) 100%);
+            border-radius: 25px;
+            border-left: 6px solid #667eea;
+            display: none;
+            animation: slideIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result::before {
+            content: '🎉';
+            position: absolute;
+            font-size: 8rem;
+            opacity: 0.05;
+            right: -20px;
+            top: -20px;
+            transform: rotate(-20deg);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .result-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .result-details {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            padding: 15px;
+            background: white;
+            border-radius: 15px;
+            margin-top: 15px;
+        }
+
+        .result-details strong {
+            color: #667eea;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner-container {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(102, 126, 234, 0.1);
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .loading-dots {
+            display: inline-block;
+        }
+
+        .loading-dots span {
+            animation: blink 1.4s infinite;
+        }
+
+        .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes blink {
+            0%, 80%, 100% { opacity: 0; }
+            40% { opacity: 1; }
+        }
+
+        .error {
+            background: linear-gradient(135deg, rgba(255, 82, 82, 0.1), rgba(255, 120, 120, 0.1));
+            border-left-color: #ff5252;
+        }
+
+        .error .result-value {
+            background: linear-gradient(135deg, #ff5252, #ff7979);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .history {
+            margin-top: 30px;
+            padding: 25px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .history h3 {
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .history-item {
+            padding: 12px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(240, 147, 251, 0.05));
+            border-radius: 12px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #666;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .history-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .quick-amounts {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .quick-amount-btn {
+            padding: 8px 18px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(240, 147, 251, 0.1));
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .quick-amount-btn:hover {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 35px 25px; }
+            .header h1 { font-size: 2.2rem; }
+            .currency-row { grid-template-columns: 1fr; }
+            .swap-button { justify-content: center; padding: 10px 0; }
+            .swap-btn:hover { transform: rotate(90deg) scale(1.1); }
+            .features { grid-template-columns: 1fr; }
+            .stats-bar { flex-direction: column; gap: 15px; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="icon-container">
+                <div class="sparkle">✨</div>
+                <div class="main-icon">💰</div>
+                <div class="sparkle">✨</div>
+                <div class="sparkle">✨</div>
+            </div>
+            <h1>AI Currency Converter Pro</h1>
+            <p>Powered by Advanced AI & Real-Time Rates</p>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value" id="totalConversions">0</div>
+                <div class="stat-label">Conversions</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">12+</div>
+                <div class="stat-label">Currencies</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">⚡</div>
+                <div class="stat-label">AI Powered</div>
+            </div>
+        </div>
+
+        <form id="converterForm">
+            <div class="input-group">
+                <label for="amount">
+                    <span class="label-icon">💵</span>
+                    Amount to Convert
+                </label>
+                <input type="number" id="amount" placeholder="Enter amount" value="100" step="0.01" min="0" required>
+                <div class="quick-amounts">
+                    <button type="button" class="quick-amount-btn" data-amount="10">10</button>
+                    <button type="button" class="quick-amount-btn" data-amount="50">50</button>
+                    <button type="button" class="quick-amount-btn" data-amount="100">100</button>
+                    <button type="button" class="quick-amount-btn" data-amount="500">500</button>
+                    <button type="button" class="quick-amount-btn" data-amount="1000">1000</button>
+                </div>
+            </div>
+
+            <div class="currency-row">
+                <div class="input-group">
+                    <label for="baseCurrency">
+                        <span class="label-icon">🌍</span>
+                        From
+                    </label>
+                    <select id="baseCurrency" required>
+                        <option value="USD" selected>🇺🇸 USD - US Dollar</option>
+                        <option value="EUR">🇪🇺 EUR - Euro</option>
+                        <option value="GBP">🇬🇧 GBP - British Pound</option>
+                        <option value="PKR">🇵🇰 PKR - Pakistani Rupee</option>
+                        <option value="INR">🇮🇳 INR - Indian Rupee</option>
+                        <option value="JPY">🇯🇵 JPY - Japanese Yen</option>
+                        <option value="CNY">🇨🇳 CNY - Chinese Yuan</option>
+                        <option value="AUD">🇦🇺 AUD - Australian Dollar</option>
+                        <option value="CAD">🇨🇦 CAD - Canadian Dollar</option>
+                        <option value="CHF">🇨🇭 CHF - Swiss Franc</option>
+                        <option value="SAR">🇸🇦 SAR - Saudi Riyal</option>
+                        <option value="AED">🇦🇪 AED - UAE Dirham</option>
+                    </select>
+                </div>
+
+                <div class="swap-button">
+                    <button type="button" class="swap-btn" id="swapBtn">⇄</button>
+                </div>
+
+                <div class="input-group">
+                    <label for="targetCurrency">
+                        <span class="label-icon">🎯</span>
+                        To
+                    </label>
+                    <select id="targetCurrency" required>
+                        <option value="USD">🇺🇸 USD - US Dollar</option>
+                        <option value="EUR">🇪🇺 EUR - Euro</option>
+                        <option value="GBP">🇬🇧 GBP - British Pound</option>
+                        <option value="PKR" selected>🇵🇰 PKR - Pakistani Rupee</option>
+                        <option value="INR">🇮🇳 INR - Indian Rupee</option>
+                        <option value="JPY">🇯🇵 JPY - Japanese Yen</option>
+                        <option value="CNY">🇨🇳 CNY - Chinese Yuan</option>
+                        <option value="AUD">🇦🇺 AUD - Australian Dollar</option>
+                        <option value="CAD">🇨🇦 CAD - Canadian Dollar</option>
+                        <option value="CHF">🇨🇭 CHF - Swiss Franc</option>
+                        <option value="SAR">🇸🇦 SAR - Saudi Riyal</option>
+                        <option value="AED">🇦🇪 AED - UAE Dirham</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="features">
+                <div class="feature-item">
+                    <div class="feature-icon">🤖</div>
+                    <div class="feature-text">AI Powered</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">⚡</div>
+                    <div class="feature-text">Real-Time</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🔒</div>
+                    <div class="feature-text">Secure</div>
+                </div>
+            </div>
+
+            <button type="submit" class="convert-btn" id="convertBtn">
+                ✨ Convert Now ✨
+            </button>
+        </form>
+
+        <div class="loading" id="loading">
+            <div class="spinner-container">
+                <div class="spinner"></div>
+            </div>
+            <p class="loading-text">
+                Processing with AI<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>
+            </p>
+        </div>
+
+        <div class="result" id="result">
+            <h3>💎 Conversion Result</h3>
+            <div class="result-value" id="resultValue"></div>
+            <div class="result-details" id="resultDetails"></div>
+        </div>
+
+        <div class="history" id="historySection" style="display: none;">
+            <h3>📜 Recent Conversions</h3>
+            <div id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('converterForm');
+        const swapBtn = document.getElementById('swapBtn');
+        const loading = document.getElementById('loading');
+        const result = document.getElementById('result');
+        const resultValue = document.getElementById('resultValue');
+        const resultDetails = document.getElementById('resultDetails');
+        const convertBtn = document.getElementById('convertBtn');
+        const historySection = document.getElementById('historySection');
+        const historyList = document.getElementById('historyList');
+        const totalConversionsEl = document.getElementById('totalConversions');
+
+        // IMPORTANT: Port 5001 use kar rahe hain kyunki app.py mein port 5001 hai
+        const API_URL = 'http://localhost:5001/convert';
+        
+        let conversionHistory = JSON.parse(localStorage.getItem('conversionHistory') || '[]');
+        let totalConversions = parseInt(localStorage.getItem('totalConversions') || '0');
+
+        totalConversionsEl.textContent = totalConversions;
+
+        // Quick amount buttons
+        document.querySelectorAll('.quick-amount-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.getElementById('amount').value = btn.dataset.amount;
+                document.querySelectorAll('.quick-amount-btn').forEach(b => b.style.background = '');
+                btn.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+                btn.style.color = 'white';
+            });
+        });
+
+        // Swap currencies
+        swapBtn.addEventListener('click', () => {
+            const baseCurrency = document.getElementById('baseCurrency');
+            const targetCurrency = document.getElementById('targetCurrency');
+            const temp = baseCurrency.value;
+            baseCurrency.value = targetCurrency.value;
+            targetCurrency.value = temp;
+        });
+
+        // Display history
+        function displayHistory() {
+            if (conversionHistory.length === 0) {
+                historySection.style.display = 'none';
+                return;
+            }
+            
+            historySection.style.display = 'block';
+            historyList.innerHTML = conversionHistory.slice(-5).reverse().map(item => 
+                `<div class="history-item" onclick="loadHistoryItem('${item.base}', '${item.target}', ${item.amount})">
+                    ${item.amount} ${item.base} → ${item.converted.toFixed(2)} ${item.target}
+                    <span style="float: right; color: #999;">📅 ${item.date}</span>
+                </div>`
+            ).join('');
+        }
+
+        window.loadHistoryItem = function(base, target, amount) {
+            document.getElementById('baseCurrency').value = base;
+            document.getElementById('targetCurrency').value = target;
+            document.getElementById('amount').value = amount;
+        };
+
+        displayHistory();
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const amount = parseFloat(document.getElementById('amount').value);
+            const baseCurrency = document.getElementById('baseCurrency').value;
+            const targetCurrency = document.getElementById('targetCurrency').value;
+
+            loading.classList.add('show');
+            result.classList.remove('show');
+            convertBtn.disabled = true;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        amount: amount,
+                        base_currency: baseCurrency,
+                        target_currency: targetCurrency
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const converted = data.converted_amount;
+                    resultValue.textContent = `${amount} ${baseCurrency} = ${converted.toFixed(2)} ${targetCurrency}`;
+                    resultDetails.innerHTML = `
+                        <strong>💱 Exchange Rate:</strong> 1 ${baseCurrency} = ${data.conversion_rate.toFixed(4)} ${targetCurrency}<br><br>
+                        <strong>🤖 AI Analysis:</strong> ${data.ai_response}
+                    `;
+                    result.classList.remove('error');
+                    result.classList.add('show');
+
+                    // Update stats and history
+                    totalConversions++;
+                    totalConversionsEl.textContent = totalConversions;
+                    localStorage.setItem('totalConversions', totalConversions);
+
+                    conversionHistory.push({
+                        base: baseCurrency,
+                        target: targetCurrency,
+                        amount: amount,
+                        converted: converted,
+                        rate: data.conversion_rate,
+                        date: new Date().toLocaleDateString()
+                    });
+                    localStorage.setItem('conversionHistory', JSON.stringify(conversionHistory.slice(-10)));
+                    displayHistory();
+
+                } else {
+                    throw new Error(data.error || 'Conversion failed');
+                }
+           } catch (error) {
+                resultValue.textContent = '❌ Error';
+                resultDetails.innerHTML = `
+                    <strong>Failed to convert:</strong> ${error.message}<br><br>
+                    <strong>💡 Tip:</strong> Make sure your backend is running on http://localhost:5001
+                `;
+                result.classList.add('error');
+                result.classList.add('show');
+            } finally {
+                loading.classList.remove('show');
+                convertBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
